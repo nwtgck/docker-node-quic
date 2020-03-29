@@ -40,6 +40,6 @@ RUN apt update && apt install -y python3-distutils && apt-get clean && rm -rf /v
 RUN cd /build/quic && \
     ./configure && \
     CC='ccache gcc' CXX='ccache g++' make -j2
-RUN make install
+RUN cd /build/quic && make install PREFIX=/usr/local
 
 CMD [ "node" ]
