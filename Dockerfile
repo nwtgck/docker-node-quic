@@ -2,11 +2,7 @@
 
 FROM ubuntu:18.04
 
-LABEL maintainer="Ryo Ota <nwtgck@nwtgck.org"
-
-# ENV CC='ccache gcc-4.9'
-# ENV CXX='ccache g++-4.9'
-# ENV JOBS=2
+LABEL maintainer="Ryo Ota <nwtgck@nwtgck.org>"
 
 RUN apt update && \
     apt install -y software-properties-common && \
@@ -16,30 +12,24 @@ RUN apt update && \
       g++ \
       python \
       ccache \
-      build-essential && \
+      build-essential \
+      git \
+      python3-distutils && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 ENV NODE_QUIC_REVISION=cee2e5d079ca2b55e421d81df1ad131c1bfeecc6
 
-# Clone Node.js with QUIC
-RUN apt update && apt install -y git && \
-    mkdir -p build && \
+RUN mkdir -p build && \
     cd build && \
     git clone https://github.com/nodejs/quic.git && \
     cd quic && \
     git reset --hard $NODE_QUIC_REVISION && \
-    apt remove -y git && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# TODO: Move top
-RUN apt update && apt install -y python3-distutils && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Build Node.js with QUIC
-RUN cd /build/quic && \
-    ./configure && \
-    CC='ccache gcc' CXX='ccache g++' make -j2
-RUN cd /build/quic && make install PREFIX=/usr/local
+    # Build Node.js with QUIC
+    ./configure --experimental-quic && \
+    CC='ccache gcc' CXX='ccache g++' make -j2 && \
+    # Install
+    make install PREFIX=/usr/local && \
+    rm -rf /build
 
 CMD [ "node" ]
