@@ -16,3 +16,4 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
           repository: nwtgck/node-quic
           tags: latest
+          push: ${{ github.ref == 'refs/heads/master' }}
