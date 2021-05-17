@@ -18,13 +18,13 @@ RUN apt update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-ENV NODE_QUIC_REVISION=cee2e5d079ca2b55e421d81df1ad131c1bfeecc6
+ENV NODE_REVISION=79c57d0cc55db834177d2f8ce4b4d83109a23dc9
 
 RUN mkdir -p build && \
     cd build && \
-    git clone https://github.com/nodejs/quic.git && \
-    cd quic && \
-    git reset --hard $NODE_QUIC_REVISION && \
+    git clone https://github.com/nodejs/node.git && \
+    cd node && \
+    git reset --hard $NODE_REVISION && \
     # Build Node.js with QUIC
     ./configure --experimental-quic && \
     CC='ccache gcc' CXX='ccache g++' make -j2 && \
